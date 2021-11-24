@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time News</title>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+<script>
+    
+    const xhr= new XMLHttpRequest();
+    xhr.open("GET","https://cors-anywhere.herokuapp.com/https://time.com",true);
+    xhr.responseType="document";
+    xhr.onload= ()=>{
+        if(xhr.readyState==4 && xhr.status==200)
+        {          let container=xhr.responseXML.querySelectorAll(".swipe-h");
+                let response= container[2].querySelectorAll("h2.title > a");
+                const jsonRes=[];
+                let out="[ "
+                for(let i=0;i<response.length;i++){
+                    jsonRes.push({text:response[i].outerText,
+                    link:`https://time.com/${response[i].href.substring(36)}`});
+                    out += `{"title":"${jsonRes[i].text}","link":"${jsonRes[i].link}"}`;
+                    if(i!=response.length-1)
+                    out+=",\n"
+                    
+                }
+                out+=" ]";
+            document.getElementById("root").innerHTML=out;
+                console.log(jsonRes);
+        }
+    }
+    xhr.onerror=()=>{
+        console.log(xhr.status,xhr.statusText);
+
+    }
+
+    xhr.send();
+
+
+</script>
+</html>
+<!-- 
+Note:
+
+https://cors-anywhere.herokuapp.com/corsdemo need to temporarily requet access to CORS for site to work. -->
